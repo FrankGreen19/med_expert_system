@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx.dockerfile
+    ports:
+      - "8098:80"
+    links:
+      - fpm
+    volumes:
+      - ./:/var/www/symfony-docker
+  fpm:
+    build:
+      context: .
+      dockerfile: docker/fpm.dockerfile
+    volumes:
+      - ./:/var/www/symfony-docker

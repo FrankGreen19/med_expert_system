@@ -91,6 +91,9 @@
     "nikic/php-parser": {
         "version": "v4.13.2"
     },
+    "php-amqplib/php-amqplib": {
+        "version": "v2.0.2"
+    },
     "psr/cache": {
         "version": "3.0.0"
     },
