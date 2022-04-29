@@ -11,9 +11,32 @@ services:
       - fpm
     volumes:
       - ./:/var/www/symfony-docker
+
   fpm:
     build:
       context: .
       dockerfile: docker/fpm.dockerfile
+    links:
+      - postgres
+    depends_on:
+      - postgres
     volumes:
-      - ./:/var/www/symfony-docker
+      - ./:/var/www/symfony-docker # текущий каталог будет присоединен к контейнеру
+
+  rabbitmq:
+    image: rabbitmq:3.9-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - '~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/mnesia/'
+
+  postgres:
+    image: postgres:12.2-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
