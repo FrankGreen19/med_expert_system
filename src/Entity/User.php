@@ -6,7 +6,6 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`users`')]
 #[ORM\HasLifecycleCallbacks()]
 class User
 {
@@ -35,6 +34,9 @@ class User
 
     #[ORM\Column(type: 'date')]
     private ?\DateTimeInterface $birthDate;
+
+    #[ORM\ManyToOne(targetEntity: 'Role')]
+    private $role;
 
     public function getId(): ?int
     {
