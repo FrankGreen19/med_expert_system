@@ -19,10 +19,9 @@ class IllnessRepository extends ServiceEntityRepository
         parent::__construct($registry, Illness::class);
     }
 
-    // /**
-    //  * @return Illness[] Returns an array of Illness objects
-    //  */
-    /*
+    /**
+     * @return Illness[] Returns an array of Illness objects
+     */
     public function findByExampleField($value)
     {
         return $this->createQueryBuilder('i')
@@ -34,9 +33,7 @@ class IllnessRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    */
 
-    /*
     public function findOneBySomeField($value): ?Illness
     {
         return $this->createQueryBuilder('i')
@@ -46,5 +43,5 @@ class IllnessRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }

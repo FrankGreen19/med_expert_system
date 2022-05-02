@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\IllnessRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,30 +12,11 @@ class UserController extends AbstractController
 {
 
     #[Route('/user', name: 'user', methods: ['GET'])]
-    public function index(ManagerRegistry $doctrine): Response
+    public function index(IllnessRepository $illnessRepository): Response
     {
-        $entityManager = $doctrine->getManager();
+        $illnesses = $illnessRepository->findAll();
 
-        $user = new User();
-        $user->setEmail('test@gmail.com');
-        $user->setPassword('12345');
-        $user->setLName('Krasnova');
-        $user->setFName('Alisa');
-        $user->setBirthDate(new \DateTime());
-
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        $result = false;
-        if ($user->getId()) {
-            $result = true;
-        }
-
-        return $this->json([
-            'message' => $user->getFullName(),
-            'method' => 'GET',
-            'result' => $result
-        ]);
+        return $this->json($illnesses);
     }
 
     #[Route('/user', name: 'post', methods: ['POST'])]

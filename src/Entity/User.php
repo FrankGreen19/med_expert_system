@@ -38,6 +38,12 @@ class User
     #[ORM\ManyToOne(targetEntity: 'Role')]
     private $role;
 
+    #[ORM\OneToOne(mappedBy: 'owner', targetEntity: JwtToken::class, cascade: ['persist', 'remove'])]
+    private $jwtToken;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isActive;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,5 +138,54 @@ class User
         $this->fullName = $this->pName
             ? $this->lName.' '.$this->fName.' '.$this->pName
             : $this->lName.' '.$this->fName;
+    }
+
+    public function getJwtToken(): ?JwtToken
+    {
+        return $this->jwtToken;
+    }
+
+    public function setJwtToken(JwtToken $jwtToken): self
+    {
+        // set the owning side of the relation if necessary
+        if ($jwtToken->getOwner() !== $this) {
+            $jwtToken->setOwner($this);
+        }
+
+        $this->jwtToken = $jwtToken;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param mixed $role
+     */
+    public function setRole($role): void
+    {
+        $this->role = $role;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     */
+    public function setIsActive(bool $isActive)
+    {
+        $this->isActive = $isActive;
     }
 }

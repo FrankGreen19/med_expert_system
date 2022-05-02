@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\IllnessRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
 #[ORM\Entity(repositoryClass: IllnessRepository::class)]
@@ -18,8 +20,36 @@ class Illness
     #[ORM\Column(type: 'string', length: 255)]
     private string $title;
 
-    #[ORM\ManyToMany(targetEntity: 'Symptom')]
-    private ArrayCollection $symptoms;
+    #[ORM\ManyToMany(targetEntity: 'App\Entity\Symptom')]
+    #[ORM\JoinTable(name: 'illness_symptom')]
+    #[ORM\JoinColumn(name: 'illness_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'symptom_id', referencedColumnName: 'id')]
+    private $symptoms;
+
+    /**
+     * Illness constructor.
+     * @param $symptoms
+     */
+    public function __construct($symptoms)
+    {
+        $this->symptoms = $symptoms;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSymptoms()
+    {
+        return $this->symptoms;
+    }
+
+    /**
+     * @param mixed $symptoms
+     */
+    public function setSymptoms($symptoms): void
+    {
+        $this->symptoms = $symptoms;
+    }
 
     #[ORM\Column(type: 'string', length: 30, nullable: false)]
     private string $alias;
@@ -39,25 +69,6 @@ class Illness
     {
         $this->alias = $alias;
     }
-
-    /**
-     * Illness constructor.
-     * @param $symptoms
-     */
-    #[Pure]
-    public function __construct()
-    {
-        $this->symptoms = new ArrayCollection();
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getSymptoms(): ArrayCollection
-    {
-        return $this->symptoms;
-    }
-
 
     public function getId(): ?int
     {
