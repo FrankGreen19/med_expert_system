@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class JwtController extends AbstractController
 {
-    #[Route('/jwt/registration',  name: 'registration', methods: [POST])]
+    #[Route('/jwt/registration',  name: 'registration', methods: ['POST'])]
     public function registration(UserRepository $userRepository): Response
     {
 
