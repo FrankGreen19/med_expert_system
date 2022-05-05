@@ -6,7 +6,7 @@ use App\Repository\JwtTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JwtTokenRepository::class)]
-class JwtToken
+class RefreshToken
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,18 +23,6 @@ class JwtToken
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(int $userId): self
-    {
-        $this->userId = $userId;
-
-        return $this;
     }
 
     public function getRefreshToken(): ?string

@@ -4,10 +4,14 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
-class User
+#[ORM\Table(name: '`usr`')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,11 +39,11 @@ class User
     #[ORM\Column(type: 'date')]
     private ?\DateTimeInterface $birthDate;
 
-    #[ORM\ManyToOne(targetEntity: 'Role')]
-    private $role;
+    #[ORM\ManyToMany(targetEntity: 'Role')]
+    private $roles;
 
-    #[ORM\OneToOne(mappedBy: 'owner', targetEntity: JwtToken::class, cascade: ['persist', 'remove'])]
-    private $jwtToken;
+    #[ORM\OneToOne(mappedBy: 'owner', targetEntity: RefreshToken::class, cascade: ['persist', 'remove'])]
+    private $refreshToken;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
@@ -140,12 +144,12 @@ class User
             : $this->lName.' '.$this->fName;
     }
 
-    public function getJwtToken(): ?JwtToken
+    public function getJwtToken(): ?RefreshToken
     {
-        return $this->jwtToken;
+        return $this->refreshToken;
     }
 
-    public function setJwtToken(JwtToken $jwtToken): self
+    public function setJwtToken(RefreshToken $jwtToken): self
     {
         // set the owning side of the relation if necessary
         if ($jwtToken->getOwner() !== $this) {
@@ -157,35 +161,33 @@ class User
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRole()
+    public function getRoles(): array
     {
-        return $this->role;
+        return $this->roles;
     }
 
-    /**
-     * @param mixed $role
-     */
-    public function setRole($role): void
+    public function setRoles(array $roles): void
     {
-        $this->role = $role;
+        $this->roles = $roles;
     }
 
-    /**
-     * @return boolean
-     */
     public function getIsActive(): bool
     {
         return $this->isActive;
     }
 
-    /**
-     * @param bool $isActive
-     */
     public function setIsActive(bool $isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // TODO: Implement getUserIdentifier() method.
     }
 }
