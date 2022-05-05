@@ -66,7 +66,7 @@ class RegistrationController extends AbstractController
                 'refreshToken' => null
             ]);
         } else {
-            $this->json('error while saving', 400);
+            return $this->json('error while saving', 400);
         }
     }
 }
