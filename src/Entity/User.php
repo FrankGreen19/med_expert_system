@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -40,6 +39,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $birthDate;
 
     #[ORM\ManyToMany(targetEntity: 'Role')]
+    #[ORM\JoinTable(name: 'user_role')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private $roles;
 
     #[ORM\OneToOne(mappedBy: 'owner', targetEntity: RefreshToken::class, cascade: ['persist', 'remove'])]
@@ -47,6 +48,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
+
+    public function __construct($roles)
+    {
+        $this->roles = $roles;
+    }
+
 
     public function getId(): ?int
     {
@@ -188,6 +195,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        // TODO: Implement getUserIdentifier() method.
+        return $this->email;
     }
 }
