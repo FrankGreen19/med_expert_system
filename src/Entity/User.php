@@ -49,12 +49,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
 
-    public function __construct($roles)
-    {
-        $this->roles = $roles;
-    }
-
-
     public function getId(): ?int
     {
         return $this->id;
@@ -70,6 +64,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
 
         return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getUsername(): string
+    {
+        return (string) $this->email;
     }
 
     public function getPassword(): ?string
@@ -151,12 +155,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             : $this->lName.' '.$this->fName;
     }
 
-    public function getJwtToken(): ?RefreshToken
+    public function getRefreshToken(): ?RefreshToken
     {
         return $this->refreshToken;
     }
 
-    public function setJwtToken(RefreshToken $jwtToken): self
+    public function setRefreshToken(RefreshToken $jwtToken): self
     {
         // set the owning side of the relation if necessary
         if ($jwtToken->getOwner() !== $this) {
@@ -170,7 +174,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = [];
+        foreach ($this->roles->toArray() as $role) {
+            $roles[] = $role->getTitle();
+        }
+
+        return $roles;
     }
 
     public function setRoles(array $roles): void
@@ -191,10 +200,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
-    }
-
-    public function getUserIdentifier(): string
-    {
-        return $this->email;
     }
 }
