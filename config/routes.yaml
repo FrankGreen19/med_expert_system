@@ -7,4 +7,7 @@ kernel:
     type: annotation
 
 api_login_check:
-    path: /api/login_check
+    path: /login
+
+api_refresh_token:
+    path: /token-refresh

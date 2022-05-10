@@ -43,9 +43,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private $roles;
 
-    #[ORM\OneToOne(mappedBy: 'owner', targetEntity: RefreshToken::class, cascade: ['persist', 'remove'])]
-    private $refreshToken;
-
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
 
@@ -153,23 +150,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->fullName = $this->pName
             ? $this->lName.' '.$this->fName.' '.$this->pName
             : $this->lName.' '.$this->fName;
-    }
-
-    public function getRefreshToken(): ?RefreshToken
-    {
-        return $this->refreshToken;
-    }
-
-    public function setRefreshToken(RefreshToken $jwtToken): self
-    {
-        // set the owning side of the relation if necessary
-        if ($jwtToken->getOwner() !== $this) {
-            $jwtToken->setOwner($this);
-        }
-
-        $this->jwtToken = $jwtToken;
-
-        return $this;
     }
 
     public function getRoles(): array
