@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\JwtTokenRepository;
+use App\Repository\RefreshTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: JwtTokenRepository::class)]
+#[ORM\Entity(repositoryClass: RefreshTokenRepository::class)]
 class RefreshToken
 {
     #[ORM\Id]
