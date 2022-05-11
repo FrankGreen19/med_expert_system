@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -45,6 +47,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
+
+    #[ORM\OneToMany(mappedBy: 'usr', targetEntity: MedicalTest::class)]
+    private $medicalTests;
+
+    public function __construct()
+    {
+        $this->medicalTests = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -180,5 +190,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection|MedicalTest[]
+     */
+    public function getMedicalTests(): Collection
+    {
+        return $this->medicalTests;
+    }
+
+    public function addMedicalTest(MedicalTest $medicalTest): self
+    {
+        if (!$this->medicalTests->contains($medicalTest)) {
+            $this->medicalTests[] = $medicalTest;
+            $medicalTest->setUsr($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedicalTest(MedicalTest $medicalTest): self
+    {
+        if ($this->medicalTests->removeElement($medicalTest)) {
+            // set the owning side to null (unless already changed)
+            if ($medicalTest->getUsr() === $this) {
+                $medicalTest->setUsr(null);
+            }
+        }
+
+        return $this;
     }
 }
