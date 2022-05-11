@@ -16,6 +16,10 @@ class AsyncJob
     #[ORM\Column(type: 'json')]
     private array $context = [];
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
+    private ?User $user;
+
     public function getId(): ?int
     {
         return $this->id;
