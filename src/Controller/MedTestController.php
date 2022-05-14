@@ -42,11 +42,17 @@ class MedTestController extends AbstractController
         $em->persist($medTest);
         $em->flush();
 
+        $asyncJob = new AsyncJob();
+        $em->persist($asyncJob);
+        $em->flush();
+
         $testContext['xray_img_path'] = $xrayImage->getImagePath();
         $testContext['medical_test_id'] = $medTest->getId();
-        $asyncJob = new AsyncJob();
+        $testContext['async_job_id'] = $asyncJob->getId();
+
         $asyncJob->setContext($testContext);
         $asyncJob->setUser($user);
+        $asyncJob->setStatus(AsyncJob::STATUS_QUEUED);
 
         $em->persist($asyncJob);
         $em->flush();
