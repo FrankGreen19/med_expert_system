@@ -5,11 +5,8 @@ namespace App\Entity;
 use App\Repository\XrayImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation\Uploadable;
-use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 
 #[ORM\Entity(repositoryClass: XrayImageRepository::class)]
-#[Uploadable]
 class XrayImage
 {
     #[ORM\Id]
@@ -20,11 +17,13 @@ class XrayImage
     #[ORM\Column(type: 'string', length: 255)]
     private $imageName;
 
-    #[UploadableField(mapping: 'product_image', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $imageSize = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -51,6 +50,12 @@ class XrayImage
     public function setImageFile(?File $imageFile): void
     {
         $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     public function getImageSize(): ?int
@@ -62,4 +67,16 @@ class XrayImage
     {
         $this->imageSize = $imageSize;
     }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+
 }
