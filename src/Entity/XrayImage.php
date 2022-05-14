@@ -15,15 +15,15 @@ class XrayImage
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $imageName;
+    private string $imageName;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private string $imagePath;
 
     private ?File $imageFile = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $imageSize = null;
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -50,12 +50,6 @@ class XrayImage
     public function setImageFile(?File $imageFile): void
     {
         $this->imageFile = $imageFile;
-
-        if (null !== $imageFile) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new \DateTimeImmutable();
-        }
     }
 
     public function getImageSize(): ?int
@@ -68,15 +62,23 @@ class XrayImage
         $this->imageSize = $imageSize;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getImagePath(): string
     {
-        return $this->updatedAt;
+        return $this->imagePath;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): void
+    public function setImagePath($imagePath): void
     {
-        $this->updatedAt = $updatedAt;
+        $this->imagePath = $imagePath;
     }
 
+    public function parseUploadedFile(File $file): XrayImage
+    {
+        $this->imageFile = $file;
+        $this->imagePath = $_ENV['FILE_UPLOAD_DIR'] . $file->getFilename();
+        $this->imageName = $file->getFilename();
+        $this->imageSize = $file->getSize();
 
+        return $this;
+    }
 }

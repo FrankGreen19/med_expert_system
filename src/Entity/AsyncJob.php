@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AsyncJobRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: AsyncJobRepository::class)]
 class AsyncJob
@@ -18,7 +19,7 @@ class AsyncJob
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
-    private ?User $user;
+    private ?UserInterface $user;
 
     public function getId(): ?int
     {
@@ -35,5 +36,15 @@ class AsyncJob
         $this->context = $context;
 
         return $this;
+    }
+
+    public function getUser(): ?UserInterface
+    {
+        return $this->user;
+    }
+
+    public function setUser(?UserInterface $user): void
+    {
+        $this->user = $user;
     }
 }

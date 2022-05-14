@@ -4,10 +4,14 @@ namespace App\Entity;
 
 use App\Repository\MedicalTestRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: MedicalTestRepository::class)]
 class MedicalTest
 {
+    const TEST_COMMON = 'common';
+    const TEST_SPECIALIZED = 'specialized';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -28,6 +32,9 @@ class MedicalTest
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $fuzzyResult;
 
+    #[ORM\Column(type: 'json', length: 255, nullable: true)]
+    private $context = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -38,7 +45,7 @@ class MedicalTest
         return $this->usr;
     }
 
-    public function setUsr(?User $usr): self
+    public function setUsr(?UserInterface $usr): self
     {
         $this->usr = $usr;
 
@@ -91,5 +98,15 @@ class MedicalTest
         $this->fuzzyResult = $fuzzyResult;
 
         return $this;
+    }
+
+    public function getContext(): array
+    {
+        return $this->context;
+    }
+
+    public function setContext(array $context): void
+    {
+        $this->context = $context;
     }
 }
