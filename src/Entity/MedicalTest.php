@@ -26,8 +26,8 @@ class MedicalTest
     #[ORM\OneToOne(targetEntity: XrayImage::class, cascade: ['persist', 'remove'])]
     private $xrayImage;
 
-    #[ORM\ManyToOne(targetEntity: Illness::class)]
-    private $cnnResult;
+    #[ORM\Column(type: 'json', length: 255, nullable: true)]
+    private $cnnResult = [];
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $fuzzyResult;
@@ -76,18 +76,6 @@ class MedicalTest
         return $this;
     }
 
-    public function getCnnResult(): ?Illness
-    {
-        return $this->cnnResult;
-    }
-
-    public function setCnnResult(?Illness $cnnResult): self
-    {
-        $this->cnnResult = $cnnResult;
-
-        return $this;
-    }
-
     public function getFuzzyResult(): ?string
     {
         return $this->fuzzyResult;
@@ -108,5 +96,15 @@ class MedicalTest
     public function setContext(array $context): void
     {
         $this->context = $context;
+    }
+
+    public function getCnnResult(): array
+    {
+        return $this->cnnResult;
+    }
+
+    public function setCnnResult(array $cnnResult): void
+    {
+        $this->cnnResult = $cnnResult;
     }
 }
