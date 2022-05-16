@@ -26,19 +26,25 @@ class MedTestController extends AbstractController
     {
         $em = $doctrine->getManager();
 
-        $testContext = (array) $request->request->all();
+        $testContext = (array) json_decode($request->getContent());
+        $testContext['symptoms'] = (array) $testContext['symptoms'][0];
         $user = $this->getUser();
 
-        $uploadedFile = FileService::upload($request->files->get('xray'));
-        $xrayImage = (new XrayImage())->parseUploadedFile($uploadedFile);
-
         $medTest = new MedicalTest();
-        $medTest->setTestType(MedicalTest::TEST_COMMON);
+        $medTest->setTestType($testContext['test_type']);
         $medTest->setUsr($user);
         $medTest->setContext($testContext);
-        $medTest->setXrayImage($xrayImage);
 
-        $em->persist($xrayImage);
+        if ($file = $request->files->get('xray')) {
+            $uploadedFile = FileService::upload($file);
+
+            $xrayImage = (new XrayImage())->parseUploadedFile($uploadedFile);
+            $em->persist($xrayImage);
+
+            $testContext['xray_img_path'] = $xrayImage->getImagePath();
+            $medTest->setXrayImage($xrayImage);
+        }
+
         $em->persist($medTest);
         $em->flush();
 
@@ -46,7 +52,6 @@ class MedTestController extends AbstractController
         $em->persist($asyncJob);
         $em->flush();
 
-        $testContext['xray_img_path'] = $xrayImage->getImagePath();
         $testContext['medical_test_id'] = $medTest->getId();
         $testContext['async_job_id'] = $asyncJob->getId();
 
@@ -57,10 +62,7 @@ class MedTestController extends AbstractController
         $em->persist($asyncJob);
         $em->flush();
 
-        for ($i = 0; $i <= 15; $i++) {
-            AmqpService::publishMessage(json_encode($testContext));
-        }
-
+        AmqpService::publishMessage(json_encode($testContext));
 
         return $this->json([
             'message' => 'message published'
